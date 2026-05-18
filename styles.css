@@ -1,0 +1,96 @@
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  margin: 0;
+  background: #111827;
+  color: #e5e7eb;
+}
+
+header, main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+h1, h2 {
+  margin: 0 0 12px;
+}
+
+.card {
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 16px;
+  padding: 16px;
+  margin: 12px 0;
+}
+
+label {
+  display: block;
+  margin: 10px 0 4px;
+}
+
+input, button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #4b5563;
+  background: #111827;
+  color: #e5e7eb;
+  box-sizing: border-box;
+}
+
+select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #4b5563;
+  background: #111827;
+  color: #e5e7eb;
+  box-sizing: border-box;
+}
+
+button {
+  background: #2563eb;
+  border: none;
+  font-weight: 700;
+  margin-top: 12px;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: #374151;
+}
+
+button:hover {
+  filter: brightness(1.1);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.status {
+  padding: 10px 12px;
+  border-radius: 999px;
+  display: inline-block;
+  font-weight: 700;
+}
+
+.online {
+  background: #064e3b;
+  color: #a7f3d0;
+}
+
+.offline {
+  background: #7f1d1d;
+  color: #fecaca;
+}
+
+ul {
+  padding-left: 20px;
+}
+
+small {
+  color: #9ca3af;
+}

@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FRC Scouting PWA</title>
+  <link rel="manifest" href="manifest.json">
+  <style>
+    body{font-family:system-ui,sans-serif;margin:0;background:#111827;color:#e5e7eb}
+    header,main{max-width:900px;margin:0 auto;padding:16px}
+    h1{margin-bottom:4px}
+    .card{background:#1f2937;border:1px solid #374151;border-radius:16px;padding:16px;margin:12px 0}
+    .card h2{margin-top:0;margin-bottom:8px}
+    label{display:block;margin:10px 0 4px;font-size:14px;font-weight:600}
+    input,button,select{width:100%;padding:12px;border-radius:12px;border:1px solid #4b5563;background:#111827;color:#e5e7eb;box-sizing:border-box}
+    input[type="number"]{font-size:16px}
+    button{background:#2563eb;border:none;font-weight:700;margin-top:12px;cursor:pointer}
+    button.secondary{background:#374151}
+    button:hover{filter:brightness(1.1)}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .status{padding:10px 12px;border-radius:999px;display:inline-block;font-weight:700}
+    .online{background:#064e3b;color:#a7f3d0;box-shadow:0 0 0 1px #059669}
+    .offline{background:#7f1d1d;color:#fecaca;box-shadow:0 0 0 1px #b91c1c}
+    ul{padding-left:18px}
+    small{color:#9ca3af}
+    table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+    th,td{border:1px solid #374151;padding:8px}
+    th{background:#1f2937;position:sticky;top:0;z-index:1}
+    tr:nth-child(even){background:#111827}
+    tr:nth-child(odd){background:#020617}
+    tbody tr:hover{background:#1f2937}
+    .tab-bar{margin-top:8px;display:inline-flex;gap:8px}
+    .tab-button{width:auto;padding:8px 16px;border-radius:999px;font-size:14px}
+    .tab-button.active{background:#2563eb}
+    .tab-button.inactive{background:#374151}
+  </style>
+</head>
+<body>
+<header>
+  <h1>FRC Scouting</h1>
+  <div id="netStatus" class="status offline">Offline</div>
+  <div class="tab-bar">
+    <button id="tabScouting" class="tab-button active">Scouting</button>
+    <button id="tabData" class="tab-button inactive">View data</button>
+  </div>
+</header>
+
+<main>
+  <!-- Scouting section -->
+  <section id="scoutSection">
+    <form id="scoutForm">
+      <!-- Section 1: Scouter & basic info -->
+      <div class="card">
+        <h2>1. Scouter & match info</h2>
+        <div class="row">
+          <div>
+            <label for="scouterName">Scouter name</label>
+            <input id="scouterName" type="text" placeholder="Your name" required>
+          </div>
+          <div>
+            <label for="match">Match number</label>
+            <input id="match" type="number" min="1" required>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="team">Robot / team number</label>
+            <input id="team" type="number" min="1" required>
+          </div>
+          <div>
+            <label for="alliance">Alliance color</label>
+            <select id="alliance">
+              <option value="red">Red</option>
+              <option value="blue">Blue</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Autonomous -->
+      <div class="card">
+        <h2>2. Autonomous</h2>
+        <div class="row">
+          <div>
+            <label for="autoScore">Auto score</label>
+            <input id="autoScore" type="number" min="0" value="0">
+          </div>
+          <div>
+            <label>Quick add</label>
+            <div class="row" style="grid-template-columns:repeat(8,1fr);gap:4px;">
+              <button type="button" class="secondary autoAdd" data-inc="-10">-10</button>
+              <button type="button" class="secondary autoAdd" data-inc="-5">-5</button>
+              <button type="button" class="secondary autoAdd" data-inc="-2">-2</button>
+              <button type="button" class="secondary autoAdd" data-inc="-1">-1</button>
+              <button type="button" class="secondary autoAdd" data-inc="1">+1</button>
+              <button type="button" class="secondary autoAdd" data-inc="2">+2</button>
+              <button type="button" class="secondary autoAdd" data-inc="5">+5</button>
+              <button type="button" class="secondary autoAdd" data-inc="10">+10</button>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="autoClimb">Climbed in auto?</label>
+            <select id="autoClimb">
+              <option value="no">No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Teleop -->
+      <div class="card">
+        <h2>3. Teleop</h2>
+        <div class="row">
+          <div>
+            <label for="teleopScore">Teleop score</label>
+            <input id="teleopScore" type="number" min="0" value="0">
+          </div>
+          <div>
+            <label>Quick add</label>
+            <div class="row" style="grid-template-columns:repeat(8,1fr);gap:4px;">
+              <button type="button" class="secondary teleopAdd" data-inc="-10">-10</button>
+              <button type="button" class="secondary teleopAdd" data-inc="-5">-5</button>
+              <button type="button" class="secondary teleopAdd" data-inc="-2">-2</button>
+              <button type="button" class="secondary teleopAdd" data-inc="-1">-1</button>
+              <button type="button" class="secondary teleopAdd" data-inc="1">+1</button>
+              <button type="button" class="secondary teleopAdd" data-inc="2">+2</button>
+              <button type="button" class="secondary teleopAdd" data-inc="5">+5</button>
+              <button type="button" class="secondary teleopAdd" data-inc="10">+10</button>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="teleopClimbLevel">Endgame climb level</label>
+            <select id="teleopClimbLevel">
+              <option value="none">None</option>
+              <option value="L1">L1</option>
+              <option value="L2">L2</option>
+              <option value="L3">L3</option>
+            </select>
+          </div>
+        </div>
+        <label for="notes">Notes</label>
+        <input id="notes" type="text" placeholder="Defense, consistency, issues...">
+      </div>
+
+      <!-- Section 4: Overall game stats -->
+      <div class="card">
+        <h2>4. Overall game stats</h2>
+        <div class="row">
+          <div>
+            <label for="redAuto">Red auto total</label>
+            <input id="redAuto" type="number" min="0" value="0">
+          </div>
+          <div>
+            <label for="blueAuto">Blue auto total</label>
+            <input id="blueAuto" type="number" min="0" value="0">
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="redFinal">Red final score</label>
+            <input id="redFinal" type="number" min="0" value="0">
+          </div>
+          <div>
+            <label for="blueFinal">Blue final score</label>
+            <input id="blueFinal" type="number" min="0" value="0">
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="redPenalties">Red penalties</label>
+            <input id="redPenalties" type="number" min="0" value="0">
+          </div>
+          <div>
+            <label for="bluePenalties">Blue penalties</label>
+            <input id="bluePenalties" type="number" min="0" value="0">
+          </div>
+        </div>
+      </div>
+
+      <button type="submit">Save scouting entry</button>
+    </form>
+
+    <div class="card">
+      <h2>Queued entries</h2>
+      <ul id="queue"></ul>
+      <button id="syncBtn" class="secondary">Sync now</button>
+      <small id="syncMsg"></small>
+    </div>
+  </section>
+
+  <!-- Data view section -->
+  <section id="dataSection" style="display:none;">
+    <div class="card">
+      <h2>Collected data</h2>
+
+      <div class="row">
+        <div>
+          <label for="filterTeam">Filter by team (optional)</label>
+          <input id="filterTeam" type="number" min="1" placeholder="e.g. 2056">
+        </div>
+        <div>
+          <label for="filterMatch">Filter by match (optional)</label>
+          <input id="filterMatch" type="number" min="1" placeholder="e.g. 23">
+        </div>
+      </div>
+
+      <button id="applyFilter" class="secondary">Apply filters</button>
+      <button id="clearFilter" class="secondary">Clear filters</button>
+      <button id="refreshData" class="secondary">Refresh data from sheet</button>
+
+      <small id="dataMsg"></small>
+
+      <table id="dataTable">
+        <thead><tr id="headerRow"></tr></thead>
+        <tbody id="bodyRows"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script>
+// --- endpoints ---
+const BACKEND_URL_WRITE =
+  'https://script.google.com/macros/s/AKfycbxYzqo5Jp6s8QbollySGGRcmRsWsEgIv75UMG3HAVgIKdOuzX9Tyi7Snviozkrm15fq/exec';
+const BACKEND_URL_READ =
+  'https://docs.google.com/spreadsheets/d/e/2PACX-1vRnYHQldivtSo3jEGWnwl2OaS5J6lMESwPB_gLoX2oHRoGzMTrCvTEuyL1sblVwL0aWXNu_gaDpx5K0/pub?gid=0&single=true&output=csv';
+
+// --- DOM references ---
+const DB_NAME='frc-scouting';
+const STORE='entries';
+const form=document.getElementById('scoutForm');
+const queueEl=document.getElementById('queue');
+const statusEl=document.getElementById('netStatus');
+const syncMsg=document.getElementById('syncMsg');
+const syncBtn=document.getElementById('syncBtn');
+
+const scoutSection = document.getElementById('scoutSection');
+const dataSection = document.getElementById('dataSection');
+const tabScouting = document.getElementById('tabScouting');
+const tabData = document.getElementById('tabData');
+
+const refreshDataBtn = document.getElementById('refreshData');
+const dataMsg = document.getElementById('dataMsg');
+const headerRow = document.getElementById('headerRow');
+const bodyRows = document.getElementById('bodyRows');
+
+const filterTeamInput = document.getElementById('filterTeam');
+const filterMatchInput = document.getElementById('filterMatch');
+const applyFilterBtn = document.getElementById('applyFilter');
+const clearFilterBtn = document.getElementById('clearFilter');
+
+const scouterNameInput = document.getElementById('scouterName');
+const allianceInput = document.getElementById('alliance');
+
+const autoScoreInput = document.getElementById('autoScore');
+const autoClimbInput = document.getElementById('autoClimb');
+const autoAddButtons = document.querySelectorAll('.autoAdd');
+
+const teleopScoreInput = document.getElementById('teleopScore');
+const teleopClimbLevelInput = document.getElementById('teleopClimbLevel');
+const teleopAddButtons = document.querySelectorAll('.teleopAdd');
+
+const redAutoInput = document.getElementById('redAuto');
+const blueAutoInput = document.getElementById('blueAuto');
+const redFinalInput = document.getElementById('redFinal');
+const blueFinalInput = document.getElementById('blueFinal');
+const redPenaltiesInput = document.getElementById('redPenalties');
+const bluePenaltiesInput = document.getElementById('bluePenalties');
+
+let db;
+let allRows = [];
+
+// quick-add buttons (clamped at 0)
+autoAddButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const inc = Number(btn.dataset.inc) || 0;
+    const current = Number(autoScoreInput.value) || 0;
+    const next = current + inc;
+    autoScoreInput.value = next < 0 ? 0 : next;
+  });
+});
+
+teleopAddButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const inc = Number(btn.dataset.inc) || 0;
+    const current = Number(teleopScoreInput.value) || 0;
+    const next = current + inc;
+    teleopScoreInput.value = next < 0 ? 0 : next;
+  });
+});
+
+// --- IndexedDB utils ---
+function openDB(){
+  return new Promise((resolve,reject)=>{
+    const req=indexedDB.open(DB_NAME,1);
+    req.onupgradeneeded=()=>req.result.createObjectStore(STORE,{keyPath:'id'});
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+}
+function tx(mode='readonly'){ return db.transaction(STORE,mode).objectStore(STORE); }
+function addEntry(entry){ return new Promise((res,rej)=>{ const r=tx('readwrite').add(entry); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); }); }
+function getAll(){ return new Promise((res,rej)=>{ const r=tx().getAll(); r.onsuccess=()=>res(r.result.sort((a,b)=>b.ts-a.ts)); r.onerror=()=>rej(r.error); }); }
+function delEntry(id){ return new Promise((res,rej)=>{ const r=tx('readwrite').delete(id); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); }); }
+function uid(){ return crypto.randomUUID(); }
+function online(){ return navigator.onLine; }
+
+function updateNet(){
+  const on=online();
+  statusEl.textContent=on?'Online':'Offline';
+  statusEl.className='status '+(on?'online':'offline');
+}
+
+async function renderQueue(){
+  const items=await getAll();
+  queueEl.innerHTML = items.length
+    ? items.map(e=>`<li>M${e.match} • T${e.team} • A${e.autoScore ?? e.auto} • T${e.teleopScore ?? e.teleop}</li>`).join('')
+    : '<li>No entries yet.</li>';
+}
+
+// --- sync to Sheets via Apps Script (form-encoded POST) ---
+async function sync(){
+  if(!online()){
+    syncMsg.textContent='Still offline.';
+    return;
+  }
+  const items=await getAll();
+  let sent=0;
+
+  for(const e of items){
+    const params = new URLSearchParams();
+    params.append('scouter', e.scouter);
+    params.append('match', e.match);
+    params.append('team', e.team);
+    params.append('alliance', e.alliance);
+
+    params.append('autoScore', e.autoScore);
+    params.append('autoClimb', e.autoClimb);
+
+    params.append('teleopScore', e.teleopScore);
+    params.append('teleopClimbLevel', e.teleopClimbLevel);
+    params.append('notes', e.notes);
+
+    params.append('redAuto', e.redAuto);
+    params.append('blueAuto', e.blueAuto);
+    params.append('redFinal', e.redFinal);
+    params.append('blueFinal', e.blueFinal);
+    params.append('redPenalties', e.redPenalties);
+    params.append('bluePenalties', e.bluePenalties);
+
+    params.append('id', e.id);
+
+    try{
+      const r = await fetch(BACKEND_URL_WRITE, {
+        method:'POST',
+        headers:{'Content-Type':'application/x-www-form-urlencoded'},
+        body:params.toString()
+      });
+      if(r.ok){
+        await delEntry(e.id);
+        sent++;
+      } else {
+        console.log('Sync error status:', r.status);
+      }
+    }catch(err){
+      console.error('Sync fetch error:', err);
+    }
+  }
+
+  syncMsg.textContent=`Synced ${sent} entr${sent===1?'y':'ies'}.`;
+  await renderQueue();
+}
+
+// --- form handler ---
+form.addEventListener('submit', async (ev)=>{
+  ev.preventDefault();
+  const entry = {
+    id: uid(),
+    ts: Date.now(),
+
+    scouter: scouterNameInput.value.trim(),
+    match: +match.value,
+    team: +team.value,
+    alliance: allianceInput.value,
+
+    autoScore: +autoScoreInput.value || 0,
+    autoClimb: autoClimbInput.value,
+
+    teleopScore: +teleopScoreInput.value || 0,
+    teleopClimbLevel: teleopClimbLevelInput.value,
+    notes: notes.value.trim(),
+
+    redAuto: +redAutoInput.value || 0,
+    blueAuto: +blueAutoInput.value || 0,
+    redFinal: +redFinalInput.value || 0,
+    blueFinal: +blueFinalInput.value || 0,
+    redPenalties: +redPenaltiesInput.value || 0,
+    bluePenalties: +bluePenaltiesInput.value || 0
+  };
+
+  await addEntry(entry);
+
+  form.reset();
+  autoScoreInput.value = 0;
+  teleopScoreInput.value = 0;
+  redAutoInput.value = 0;
+  blueAutoInput.value = 0;
+  redFinalInput.value = 0;
+  blueFinalInput.value = 0;
+  redPenaltiesInput.value = 0;
+  bluePenaltiesInput.value = 0;
+  allianceInput.value = 'red';
+
+  await renderQueue();
+  if(online()) await sync();
+});
+
+syncBtn.addEventListener('click', sync);
+
+window.addEventListener('online', ()=>{ updateNet(); sync(); });
+window.addEventListener('offline', updateNet);
+
+// --- load data from published CSV and build allRows ---
+async function loadDataFromSheet(){
+  dataMsg.textContent = 'Loading...';
+  dataMsg.style.color = '#9ca3af';
+  headerRow.innerHTML = '';
+  bodyRows.innerHTML = '';
+
+  try{
+    const res = await fetch(BACKEND_URL_READ);
+    const csvText = await res.text();
+
+    const lines = csvText.trim().split('\n');
+    if (!lines.length) {
+      dataMsg.textContent = 'No data yet.';
+      return;
+    }
+
+    const headers = lines[0].split(',').map(h => h.trim());
+    const rows = lines.slice(1).map(line => line.split(','));
+
+    allRows = rows.map(cols => {
+      const obj = {};
+      headers.forEach((h, i) => {
+        obj[h] = cols[i];
+      });
+      return obj;
+    });
+
+    renderTable(allRows, headers);
+    dataMsg.textContent = '';
+  }catch(err){
+    console.error('Load data error:', err);
+    dataMsg.textContent = 'Failed to load data.';
+    dataMsg.style.color = '#fca5a5';
+  }
+}
+
+// --- render table with given rows ---
+function renderTable(rows, headers){
+  if(!rows.length){
+    headerRow.innerHTML = '';
+    bodyRows.innerHTML = '';
+    dataMsg.textContent = 'No data for this filter.';
+    dataMsg.style.color = '#9ca3af';
+    return;
+  }
+
+  headerRow.innerHTML = headers.map(h=>`<th>${h}</th>`).join('');
+
+  bodyRows.innerHTML = rows.map(row=>{
+    const tds = headers.map(h=>`<td>${row[h] ?? ''}</td>`).join('');
+    return `<tr>${tds}</tr>`;
+  }).join('');
+}
+
+// --- apply team/match filters ---
+function applyFilters(){
+  if(!allRows.length){
+    dataMsg.textContent = 'No data loaded yet.';
+    dataMsg.style.color = '#9ca3af';
+    return;
+  }
+
+  const teamFilter = filterTeamInput.value.trim();
+  const matchFilter = filterMatchInput.value.trim();
+
+  const headers = Object.keys(allRows[0]);
+  const filtered = allRows.filter(row => {
+    let ok = true;
+
+    if(teamFilter){
+      const val = String(row.team || row.Team || '').trim();
+      ok = ok && (val === teamFilter);
+    }
+
+    if(matchFilter){
+      const val = String(row.match || row.Match || '').trim();
+      ok = ok && (val === matchFilter);
+    }
+
+    return ok;
+  });
+
+  if(!filtered.length){
+    dataMsg.textContent = 'No rows match that filter.';
+    dataMsg.style.color = '#9ca3af';
+  } else {
+    dataMsg.textContent = '';
+  }
+
+  renderTable(filtered, headers);
+}
+
+applyFilterBtn.addEventListener('click', applyFilters);
+
+clearFilterBtn.addEventListener('click', () => {
+  filterTeamInput.value = '';
+  filterMatchInput.value = '';
+  if(allRows.length){
+    dataMsg.textContent = '';
+    const headers = Object.keys(allRows[0]);
+    renderTable(allRows, headers);
+  }
+});
+
+// --- tab switching ---
+function showScouting(){
+  scoutSection.style.display = '';
+  dataSection.style.display = 'none';
+  tabScouting.classList.add('active');
+  tabScouting.classList.remove('inactive');
+  tabData.classList.add('inactive');
+  tabData.classList.remove('active');
+}
+
+function showData(){
+  scoutSection.style.display = 'none';
+  dataSection.style.display = '';
+  tabData.classList.add('active');
+  tabData.classList.remove('inactive');
+  tabScouting.classList.add('inactive');
+  tabScouting.classList.remove('active');
+  loadDataFromSheet();
+}
+
+tabScouting.addEventListener('click', showScouting);
+tabData.addEventListener('click', showData);
+refreshDataBtn.addEventListener('click', loadDataFromSheet);
+
+// --- startup ---
+(async()=>{
+  db=await openDB();
+  updateNet();
+  await renderQueue();
+  if(online()) sync();
+})();
+</script>
+</body>
+</html>
