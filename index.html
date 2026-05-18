@@ -23,16 +23,22 @@
     .offline{background:#7f1d1d;color:#fecaca;box-shadow:0 0 0 1px #b91c1c}
     ul{padding-left:18px}
     small{color:#9ca3af}
-    table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
-    th,td{border:1px solid #374151;padding:8px}
-    th{background:#1f2937;position:sticky;top:0;z-index:1}
-    tr:nth-child(even){background:#111827}
-    tr:nth-child(odd){background:#020617}
+    table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}
+    th,td{border:1px solid #374151;padding:6px 8px}
+    th{background:#111827;position:sticky;top:0;z-index:1;text-align:left;font-size:12px;letter-spacing:0.03em;text-transform:uppercase}
+    td{text-align:left;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+    tbody tr:nth-child(even){background:#020617}
+    tbody tr:nth-child(odd){background:#111827}
     tbody tr:hover{background:#1f2937}
     .tab-bar{margin-top:8px;display:inline-flex;gap:8px}
     .tab-button{width:auto;padding:8px 16px;border-radius:999px;font-size:14px}
     .tab-button.active{background:#2563eb}
     .tab-button.inactive{background:#374151}
+    .filter-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
+    .filter-group{flex:1 1 150px}
+    .filter-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+    .filter-actions button{flex:1 1 120px}
+    .table-wrapper{width:100%;overflow-x:auto}
   </style>
 </head>
 <body>
@@ -49,7 +55,7 @@
   <!-- Scouting section -->
   <section id="scoutSection">
     <form id="scoutForm">
-      <!-- Section 1: Scouter & basic info -->
+      <!-- Section 1: Scouter & match info -->
       <div class="card">
         <h2>1. Scouter & match info</h2>
         <div class="row">
@@ -198,27 +204,32 @@
     <div class="card">
       <h2>Collected data</h2>
 
-      <div class="row">
-        <div>
-          <label for="filterTeam">Filter by team (optional)</label>
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label for="filterTeam">Team (optional)</label>
           <input id="filterTeam" type="number" min="1" placeholder="e.g. 2056">
         </div>
-        <div>
-          <label for="filterMatch">Filter by match (optional)</label>
+        <div class="filter-group">
+          <label for="filterMatch">Match (optional)</label>
           <input id="filterMatch" type="number" min="1" placeholder="e.g. 23">
         </div>
       </div>
 
-      <button id="applyFilter" class="secondary">Apply filters</button>
-      <button id="clearFilter" class="secondary">Clear filters</button>
-      <button id="refreshData" class="secondary">Refresh data from sheet</button>
+      <div class="filter-actions">
+        <button id="applyFilter" class="secondary">Apply filters</button>
+        <button id="clearFilter" class="secondary">Clear</button>
+        <button id="refreshData" class="secondary">Refresh from sheet</button>
+      </div>
 
-      <small id="dataMsg"></small>
+      <small id="dataMsg"></small><br>
+      <small id="dataSummary"></small>
 
-      <table id="dataTable">
-        <thead><tr id="headerRow"></tr></thead>
-        <tbody id="bodyRows"></tbody>
-      </table>
+      <div class="table-wrapper">
+        <table id="dataTable">
+          <thead><tr id="headerRow"></tr></thead>
+          <tbody id="bodyRows"></tbody>
+        </table>
+      </div>
     </div>
   </section>
 </main>
@@ -246,6 +257,7 @@ const tabData = document.getElementById('tabData');
 
 const refreshDataBtn = document.getElementById('refreshData');
 const dataMsg = document.getElementById('dataMsg');
+const dataSummary = document.getElementById('dataSummary');
 const headerRow = document.getElementById('headerRow');
 const bodyRows = document.getElementById('bodyRows');
 
@@ -429,6 +441,7 @@ window.addEventListener('offline', updateNet);
 async function loadDataFromSheet(){
   dataMsg.textContent = 'Loading...';
   dataMsg.style.color = '#9ca3af';
+  dataSummary.textContent = '';
   headerRow.innerHTML = '';
   bodyRows.innerHTML = '';
 
@@ -459,6 +472,7 @@ async function loadDataFromSheet(){
     console.error('Load data error:', err);
     dataMsg.textContent = 'Failed to load data.';
     dataMsg.style.color = '#fca5a5';
+    dataSummary.textContent = '';
   }
 }
 
@@ -469,15 +483,25 @@ function renderTable(rows, headers){
     bodyRows.innerHTML = '';
     dataMsg.textContent = 'No data for this filter.';
     dataMsg.style.color = '#9ca3af';
+    dataSummary.textContent = '';
     return;
   }
+
+  const emphasisCols = new Set(['team','match','alliance','autoScore','teleopScore']);
 
   headerRow.innerHTML = headers.map(h=>`<th>${h}</th>`).join('');
 
   bodyRows.innerHTML = rows.map(row=>{
-    const tds = headers.map(h=>`<td>${row[h] ?? ''}</td>`).join('');
+    const tds = headers.map(h=>{
+      const val = row[h] ?? '';
+      const content = emphasisCols.has(h) ? `<strong>${val}</strong>` : val;
+      return `<td>${content}</td>`;
+    }).join('');
     return `<tr>${tds}</tr>`;
   }).join('');
+
+  dataSummary.textContent = `${rows.length} row${rows.length === 1 ? '' : 's'} shown`;
+  dataSummary.style.color = '#9ca3af';
 }
 
 // --- apply team/match filters ---
@@ -485,6 +509,7 @@ function applyFilters(){
   if(!allRows.length){
     dataMsg.textContent = 'No data loaded yet.';
     dataMsg.style.color = '#9ca3af';
+    dataSummary.textContent = '';
     return;
   }
 
@@ -527,6 +552,8 @@ clearFilterBtn.addEventListener('click', () => {
     dataMsg.textContent = '';
     const headers = Object.keys(allRows[0]);
     renderTable(allRows, headers);
+  } else {
+    dataSummary.textContent = '';
   }
 });
 
