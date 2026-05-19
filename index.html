@@ -39,6 +39,17 @@
     .filter-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
     .filter-actions button{flex:1 1 120px}
     .table-wrapper{width:100%;overflow-x:auto}
+    @media (max-width: 640px) {
+      header, main {padding: 12px;}
+      .row {grid-template-columns: 1fr;}
+      .tab-bar {width: 100%;justify-content: space-between;}
+      .tab-button {flex: 1 1 auto;text-align: center;}
+      input, button, select {font-size: 16px; /* avoids iOS zoom on tap */}
+      table {font-size: 12px;}
+      .card {padding: 12px;margin: 8px 0;}
+      label {margin: 6px 0 2px;}
+      button {margin-top: 8px;}
+    }
   </style>
 </head>
 <body>
