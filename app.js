@@ -90,7 +90,7 @@ async function renderQueue() {
 }
 
 // --- Sync logic ---
-const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxYzqo5Jp6s8QbollySGGRcmRsWsEgIv75UMG3HAVgIKdOuzX9Tyi7Snviozkrm15fq/exec';
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzru75R3G9w3rque_DPv5-nrnNTzX8sfYvE9S9sME0KS52nG2aMLKgR8Zbovr0iF17r/exec';
 async function syncEntries() {
   if (!isOnline()) {
     syncMsg.textContent = 'Still offline.';
