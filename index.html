@@ -35,73 +35,20 @@
     .tab-button.active{background:#2563eb}
     .tab-button.inactive{background:#374151}
     .filter-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
-    .filter-group{flex:1 1 120px}
+    .filter-group{flex:1 1 150px}
     .filter-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
     .filter-actions button{flex:1 1 120px}
     .table-wrapper{width:100%;overflow-x:auto}
-    .quick-row{display:grid;grid-template-columns:repeat(8,1fr);gap:4px}
-
     @media (max-width: 640px) {
-      header, main {
-        padding: 8px;
-      }
-
-      .card {
-        padding: 10px;
-        margin: 6px 0;
-      }
-
-      h1 {
-        font-size: 20px;
-      }
-
-      .card h2 {
-        font-size: 18px;
-        margin-bottom: 4px;
-      }
-
-      label {
-        font-size: 13px;
-        margin: 4px 0 2px;
-      }
-
-      input, button, select {
-        font-size: 16px;
-        padding: 10px;
-      }
-
-      .row {
-        grid-template-columns: 1fr;
-        gap: 8px;
-      }
-
-      .quick-row {
-        grid-template-columns:repeat(4,1fr);
-        gap:4px;
-      }
-
-      .tab-bar {
-        width: 100%;
-        justify-content: space-between;
-      }
-
-      .tab-button {
-        flex: 1 1 0;
-        padding: 6px 8px;
-        font-size: 13px;
-      }
-
-      table {
-        font-size: 11px;
-      }
-
-      th, td {
-        padding: 4px 6px;
-      }
-
-      body {
-        padding-bottom: 16px;
-      }
+      header, main {padding: 12px;}
+      .row {grid-template-columns: 1fr;}
+      .tab-bar {width: 100%;justify-content: space-between;}
+      .tab-button {flex: 1 1 auto;text-align: center;}
+      input, button, select {font-size: 16px; /* avoids iOS zoom on tap */}
+      table {font-size: 12px;}
+      .card {padding: 12px;margin: 8px 0;}
+      label {margin: 6px 0 2px;}
+      button {margin-top: 8px;}
     }
   </style>
 </head>
@@ -124,25 +71,19 @@
         <h2>1. Scouter & match info</h2>
         <div class="row">
           <div>
-            <label for="eventKey">Event key (TBA)</label>
-            <input id="eventKey" type="text" placeholder="e.g. 2025miket" required>
-          </div>
-          <div>
             <label for="scouterName">Scouter name</label>
             <input id="scouterName" type="text" placeholder="Your name" required>
           </div>
-        </div>
-        <div class="row">
           <div>
             <label for="match">Match number</label>
             <input id="match" type="number" min="1" required>
           </div>
+        </div>
+        <div class="row">
           <div>
             <label for="team">Robot / team number</label>
             <input id="team" type="number" min="1" required>
           </div>
-        </div>
-        <div class="row">
           <div>
             <label for="alliance">Alliance color</label>
             <select id="alliance">
@@ -163,7 +104,7 @@
           </div>
           <div>
             <label>Quick add</label>
-            <div class="quick-row">
+            <div class="row" style="grid-template-columns:repeat(8,1fr);gap:4px;">
               <button type="button" class="secondary autoAdd" data-inc="-10">-10</button>
               <button type="button" class="secondary autoAdd" data-inc="-5">-5</button>
               <button type="button" class="secondary autoAdd" data-inc="-2">-2</button>
@@ -196,7 +137,7 @@
           </div>
           <div>
             <label>Quick add</label>
-            <div class="quick-row">
+            <div class="row" style="grid-template-columns:repeat(8,1fr);gap:4px;">
               <button type="button" class="secondary teleopAdd" data-inc="-10">-10</button>
               <button type="button" class="secondary teleopAdd" data-inc="-5">-5</button>
               <button type="button" class="secondary teleopAdd" data-inc="-2">-2</button>
@@ -204,7 +145,7 @@
               <button type="button" class="secondary teleopAdd" data-inc="1">+1</button>
               <button type="button" class="secondary teleopAdd" data-inc="2">+2</button>
               <button type="button" class="secondary teleopAdd" data-inc="5">+5</button>
-              <button type="button" class="secondary teleopAdd" data-inc="10">+10</button>   
+              <button type="button" class="secondary teleopAdd" data-inc="10">+10</button>
             </div>
           </div>
         </div>
@@ -276,10 +217,6 @@
 
       <div class="filter-bar">
         <div class="filter-group">
-          <label for="filterEvent">Event (optional)</label>
-          <input id="filterEvent" type="text" placeholder="e.g. 2025miket">
-        </div>
-        <div class="filter-group">
           <label for="filterTeam">Team (optional)</label>
           <input id="filterTeam" type="number" min="1" placeholder="e.g. 2056">
         </div>
@@ -311,7 +248,7 @@
 <script>
 // --- endpoints ---
 const BACKEND_URL_WRITE =
-  'hhttps://script.google.com/macros/s/AKfycbyjMb2lgKgDLkyEPXvUbr111EH1TSWHAmhx5iWrnn8nad9oIi-1ea5Ats14unwVnAr4/exec';
+  'https://script.google.com/macros/s/AKfycbxYzqo5Jp6s8QbollySGGRcmRsWsEgIv75UMG3HAVgIKdOuzX9Tyi7Snviozkrm15fq/exec';
 const BACKEND_URL_READ =
   'https://docs.google.com/spreadsheets/d/e/2PACX-1vRnYHQldivtSo3jEGWnwl2OaS5J6lMESwPB_gLoX2oHRoGzMTrCvTEuyL1sblVwL0aWXNu_gaDpx5K0/pub?gid=0&single=true&output=csv';
 
@@ -335,13 +272,11 @@ const dataSummary = document.getElementById('dataSummary');
 const headerRow = document.getElementById('headerRow');
 const bodyRows = document.getElementById('bodyRows');
 
-const filterEventInput = document.getElementById('filterEvent');
 const filterTeamInput = document.getElementById('filterTeam');
 const filterMatchInput = document.getElementById('filterMatch');
 const applyFilterBtn = document.getElementById('applyFilter');
 const clearFilterBtn = document.getElementById('clearFilter');
 
-const eventKeyInput = document.getElementById('eventKey');
 const scouterNameInput = document.getElementById('scouterName');
 const allianceInput = document.getElementById('alliance');
 
@@ -407,7 +342,7 @@ function updateNet(){
 async function renderQueue(){
   const items=await getAll();
   queueEl.innerHTML = items.length
-    ? items.map(e=>`<li>${e.eventKey || ''} • M${e.match} • T${e.team} • A${e.autoScore ?? e.auto} • T${e.teleopScore ?? e.teleop}</li>`).join('')
+    ? items.map(e=>`<li>M${e.match} • T${e.team} • A${e.autoScore ?? e.auto} • T${e.teleopScore ?? e.teleop}</li>`).join('')
     : '<li>No entries yet.</li>';
 }
 
@@ -422,7 +357,6 @@ async function sync(){
 
   for(const e of items){
     const params = new URLSearchParams();
-    params.append('eventKey', e.eventKey);
     params.append('scouter', e.scouter);
     params.append('match', e.match);
     params.append('team', e.team);
@@ -472,7 +406,6 @@ form.addEventListener('submit', async (ev)=>{
     id: uid(),
     ts: Date.now(),
 
-    eventKey: eventKeyInput.value.trim(),
     scouter: scouterNameInput.value.trim(),
     match: +match.value,
     team: +team.value,
@@ -565,16 +498,7 @@ function renderTable(rows, headers){
     return;
   }
 
-  const emphasisCols = new Set([
-    'eventKey',
-    'team',
-    'match',
-    'alliance',
-    'autoScore',
-    'teleopScore',
-    'officialRedScore',
-    'officialBlueScore'
-  ]);
+  const emphasisCols = new Set(['team','match','alliance','autoScore','teleopScore']);
 
   headerRow.innerHTML = headers.map(h=>`<th>${h}</th>`).join('');
 
@@ -591,7 +515,7 @@ function renderTable(rows, headers){
   dataSummary.style.color = '#9ca3af';
 }
 
-// --- apply event/team/match filters ---
+// --- apply team/match filters ---
 function applyFilters(){
   if(!allRows.length){
     dataMsg.textContent = 'No data loaded yet.';
@@ -600,18 +524,12 @@ function applyFilters(){
     return;
   }
 
-  const eventFilter = filterEventInput.value.trim().toLowerCase();
   const teamFilter = filterTeamInput.value.trim();
   const matchFilter = filterMatchInput.value.trim();
 
   const headers = Object.keys(allRows[0]);
   const filtered = allRows.filter(row => {
     let ok = true;
-
-    if(eventFilter){
-      const val = String(row.eventKey || row.EventKey || '').trim().toLowerCase();
-      ok = ok && (val === eventFilter);
-    }
 
     if(teamFilter){
       const val = String(row.team || row.Team || '').trim();
@@ -639,7 +557,6 @@ function applyFilters(){
 applyFilterBtn.addEventListener('click', applyFilters);
 
 clearFilterBtn.addEventListener('click', () => {
-  filterEventInput.value = '';
   filterTeamInput.value = '';
   filterMatchInput.value = '';
   if(allRows.length){
